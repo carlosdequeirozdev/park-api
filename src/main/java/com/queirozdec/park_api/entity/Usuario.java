@@ -1,13 +1,14 @@
 package com.queirozdec.park_api.entity;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.time.LocalDateTime;
 import java.util.Objects;
-
+@AllArgsConstructor
 @Getter
 @Setter
 @NoArgsConstructor
@@ -22,19 +23,21 @@ public class Usuario {
     private String username;
     @Column(name = "password", nullable = false, length = 200)
     private String password;
+
     @Column(name = "role", nullable = false)
-    private Role role;
+    private Role role = Role.ROLE_CLIENTE;
+
     @Column(name = "dataCriacao")
     private LocalDateTime dataCriacao;
-    @Column(name = "dataModificacao")
+    @Column(name =  "dataModificacao")
     private LocalDateTime dataModificacao;
     @Column(name = "criadoPor")
     private LocalDateTime criadoPor;
     @Column(name = "modificadoPor")
     private LocalDateTime modificadoPor;
 
-    private enum Role{
-        ROLE_ADMIN, ROLE_CLIENTE
+    public enum Role{
+        ROLE_ADMIN, ROLE_CLIENTE;
     }
 
     @Override
