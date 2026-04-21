@@ -1,6 +1,8 @@
 package com.queirozdec.park_api.service;
 
 import com.queirozdec.park_api.entity.Usuario;
+import com.queirozdec.park_api.exception.EntityNotFoundException;
+import com.queirozdec.park_api.exception.UsernameUniqueViolationException;
 import com.queirozdec.park_api.repository.UsuarioRepository;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -20,16 +22,21 @@ public class UsuarioService {
 
     @Transactional
     public Usuario salvar(Usuario usuario) {
-        return usuarioRepository.save(usuario);
+        try {
+            return usuarioRepository.save(usuario);
+        } catch (org.springframework.dao.DataIntegrityViolationException ex) {
+            throw new UsernameUniqueViolationException(String.format("Username %s já existe", usuario.getUsername()));
+        }
     }
 
     @Transactional(readOnly = true)
     public Usuario buscarPorId(Long id) {
         return usuarioRepository.findById(id).orElseThrow(
-                () -> new RuntimeException("Usuario nao encontrado")
+                () -> new EntityNotFoundException(String.format("Usuario id=%s nao encontrado.", id))
         );
 
     }
+
     @Transactional
     public Usuario editPassword(Long id, String senhaAtual, String novaSenha, String confirmarSenha) {
         if(!novaSenha.equals(confirmarSenha)){
